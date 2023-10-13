@@ -1,10 +1,10 @@
 use crate::Position;
 use std::io::{self, stdout, Write};
 use termion::{
+    color,
     event::Key,
     input::TermRead,
     raw::{IntoRawMode, RawTerminal},
-    color,
 };
 
 pub struct Size {

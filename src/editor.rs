@@ -24,9 +24,9 @@ struct StatusMessage {
 
 impl StatusMessage {
     fn from(message: String) -> Self {
-        Self { 
-            text: message, 
-            time: Instant::now(), 
+        Self {
+            text: message,
+            time: Instant::now(),
         }
     }
 }
@@ -85,6 +85,7 @@ impl Editor {
         let pressed_key = Terminal::read_key()?;
         match pressed_key {
             Key::Ctrl('q') => self.should_quit = true,
+            Key::Char(c) => self.document.insert(&self.cursor_position, c),
             Key::Up
             | Key::Down
             | Key::Left
@@ -104,12 +105,12 @@ impl Editor {
         let width = self.terminal.size().width as usize;
         let height = self.terminal.size().height as usize;
         let offset = &mut self.offset;
-        
+
         if y < offset.y {
             offset.y = y;
         } else if y >= offset.y.saturating_add(height) {
             offset.y = y.saturating_sub(height).saturating_add(1);
-        } 
+        }
 
         if x < offset.x {
             offset.x = x;
@@ -134,7 +135,7 @@ impl Editor {
                 if y < height {
                     y = y.saturating_add(1);
                 }
-            } 
+            }
             Key::Left => {
                 if x > 0 {
                     x -= 1
@@ -146,7 +147,7 @@ impl Editor {
                         x = 0;
                     }
                 }
-            },
+            }
             Key::Right => {
                 if x < width {
                     x += 1;
@@ -161,7 +162,7 @@ impl Editor {
                 } else {
                     0
                 }
-            },
+            }
             Key::PageDown => {
                 y = if y.saturating_add(terminal_height) < height {
                     y + terminal_height as usize
@@ -173,7 +174,7 @@ impl Editor {
             Key::End => x = width,
             _ => (),
         }
-        
+
         width = if let Some(row) = self.document.row(y) {
             row.len()
         } else {
@@ -234,7 +235,7 @@ impl Editor {
             self.draw_message_bar();
 
             Terminal::cursor_position(&Position {
-                x: self.cursor_position.x.saturating_sub(self.offset.x), 
+                x: self.cursor_position.x.saturating_sub(self.offset.x),
                 y: self.cursor_position.y.saturating_sub(self.offset.y),
             });
         }
